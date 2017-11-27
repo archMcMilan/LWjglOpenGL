@@ -4,6 +4,8 @@ import lombok.Setter;
 import opengl.surface.Surface;
 import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Vector3d;
+
 @Setter
 public class SurfaceRenderer {
     public static final double ITERATION_COEFFICIENT = 0.05;
@@ -19,7 +21,7 @@ public class SurfaceRenderer {
 
     public void renderGl() {
         GL11.glLoadIdentity();
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         GL11.glTranslated(xTranslate, yTranslate, zTranslate);
         GL11.glRotated(angle, xRotate, yRotate, zRotate);
         GL11.glScaled(scale, scale, scale);
@@ -54,23 +56,26 @@ public class SurfaceRenderer {
         double alfa = 0;
         double t = -T_MEASURE_VALUE;
         GL11.glColor4d(1, 1, 1, 1);
-        GL11.glBegin(GL11.GL_TRIANGLES);
+        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
         while (alfa <= 4 * Math.PI) {
             while (t <= T_MEASURE_VALUE) {
-                createSurfaceWithParameters(alfa, t);
-                createSurfaceWithParameters(alfa + ITERATION_COEFFICIENT, t);
-                createSurfaceWithParameters(alfa, t + ITERATION_COEFFICIENT);
+                createNormal(alfa, t);
+                createNormal(alfa+ITERATION_COEFFICIENT, t);
+                createNormal(alfa, t+ITERATION_COEFFICIENT);
+                createNormal(alfa+ITERATION_COEFFICIENT, t+ITERATION_COEFFICIENT);
+
                 t += ITERATION_COEFFICIENT;
             }
-            t = -2;
+            t = -T_MEASURE_VALUE;
             alfa += ITERATION_COEFFICIENT;
         }
         GL11.glEnd();
     }
 
-    private void createSurfaceWithParameters(double alfa, double t) {
+    private void createNormal(double alfa, double t) {
         Surface surface = new Surface(alfa, t);
+        Vector3d normalVector = surface.getNormal(alfa, t, ITERATION_COEFFICIENT);
+        GL11.glNormal3d(normalVector.x, normalVector.y, normalVector.z);
         GL11.glVertex3d(surface.getX(), surface.getY(), surface.getZ());
     }
-
 }

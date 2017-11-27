@@ -8,12 +8,12 @@ import org.lwjgl.opengl.Display;
 public class MouseController {
     private SurfaceRenderer surfaceRenderer = new SurfaceRenderer();
     private FrameRenderer frameRenderer = new FrameRenderer();
-//    private static InputHelper input = new InputHelper();
 
     public void run() {
         while (notClose()) {
             mouseListener();
             frameRenderer.drawAxis();
+            frameRenderer.light();
             surfaceRenderer.renderGl();
             Display.update();
         }
