@@ -10,6 +10,7 @@ public class MouseController {
     private FrameRenderer frameRenderer = new FrameRenderer();
 
     public void run() {
+        surfaceRenderer.createTexture();
         while (notClose()) {
             mouseListener();
             frameRenderer.drawAxis();
